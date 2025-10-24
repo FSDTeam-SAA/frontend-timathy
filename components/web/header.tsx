@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "../ui/button"
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -16,17 +17,17 @@ export default function Header() {
   ]
 
   return (
-    <header className="border-b border-[#FF6900] bg-[#1E1E1E]">
+    <header className="border-b border-[#FF6900] bg-[#1E1E1E] sticky top-0 z-50">
       <div className="container px-4 sm:px-6 lg:px-8 py-[10px]">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Image src="/assets/logo.png" alt="Logo" width={40} height={40} />
+            <Image src="/assets/logo.png" alt="Logo" width={1000} height={1000} className="w-[60px] h-[60px]" />
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => ( 
               <Link
                 key={link.label}
                 href={link.href}
@@ -39,9 +40,11 @@ export default function Header() {
 
           <div className="flex items-center gap-4">
             {/* Desktop Login Button */}
-            <button className="hidden md:block rounded-[8px] bg-[#FF6900] px-[45px] h-[48px] text-base font-semibold text-[#FFFFFF] hover:bg-orange-600 transition">
+            <Link href="/login">
+            <Button className="hidden md:block rounded-[8px] bg-[#FF6900] px-[45px] h-[48px] text-base font-semibold text-[#FFFFFF] hover:bg-orange-600 transition">
               Login
-            </button>
+            </Button>
+            </Link>
 
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="md:hidden">

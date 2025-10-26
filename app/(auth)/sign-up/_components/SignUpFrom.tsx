@@ -7,6 +7,8 @@ import Link from "next/link"
 import { AuthLayout } from "@/components/web/auth-layout"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 export default function SignUpForm() {
   const router = useRouter()
@@ -18,7 +20,6 @@ export default function SignUpForm() {
     confirmPassword: "",
   })
   const [agreeTerms, setAgreeTerms] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
   const validateForm = () => {
@@ -67,20 +68,42 @@ export default function SignUpForm() {
     setError("")
   }
 
+  const createUserMutation = useMutation({
+    mutationFn: async (body: typeof formData) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      )
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.message || "Failed to create user")
+      }
+
+      return res.json()
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "Account created successfully!")
+      router.push("/login")
+    },
+    onError: (err) => {
+      toast.error(err.message || "Something went wrong")
+    },
+  })
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
     if (!validateForm()) return
 
-    setLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Sign Up:", formData)
-      setLoading(false)
-      router.push("/login")
-    }, 1000)
+    createUserMutation.mutate(formData)
   }
 
   return (
@@ -188,10 +211,10 @@ export default function SignUpForm() {
           <div className="pt-[32px]">
             <Button
               type="submit"
-              disabled={loading}
+              disabled={createUserMutation.isPending}
               className="w-full bg-[#FF6900] text-primary-foreground font-semibold h-[49px] rounded-[8px] hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Creating Account..." : "Sign Up"}
+              {createUserMutation.isPending ? "Creating Account..." : "Sign Up"}
             </Button>
           </div>
 

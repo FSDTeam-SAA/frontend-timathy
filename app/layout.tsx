@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import AppProvider from "@/provider/AppProvider";
+import SessionProvider from "@/provider/SessionProvider";
 
 // Import Manrope font
 const manrope = Manrope({
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${manrope.className} antialiased`}>
         <AppProvider>
+          <SessionProvider>
           {children}
+          </SessionProvider>
         </AppProvider>
       </body>
     </html>

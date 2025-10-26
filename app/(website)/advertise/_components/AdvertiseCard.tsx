@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Heart, MessageCircle, Share2 } from "lucide-react"
 import Image from "next/image"
 
 export default function AdvertiseCard() {
@@ -36,7 +35,7 @@ export default function AdvertiseCard() {
         </div>
 
         {/* Engagement Metrics */}
-        <div className="flex items-center justify-between text-base text-[#AAAAAA] pt-2 border-t-[2px] border-[#AAAAAA]">
+        {/* <div className="flex items-center justify-between text-base text-[#AAAAAA] pt-2 border-t-[2px] border-[#AAAAAA]">
           <button className="flex items-center gap-1 hover:text-white transition">
             <Heart size={16} className="text-[#AAAAAA]" />
             <span>Like</span>
@@ -49,7 +48,7 @@ export default function AdvertiseCard() {
             <Share2 size={14} />
             <span>Share</span>
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   )

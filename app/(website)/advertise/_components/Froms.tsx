@@ -14,7 +14,8 @@ export default function CampaignForm() {
   const [generatingAd, setGeneratingAd] = useState(false)
   const [websiteUrl, setWebsiteUrl] = useState("")
   const [images, setImages] = useState<File[]>([])
-  const [creativeType, setCreativeType] = useState<"Image" | "Video">("Image")
+  // const [creativeType, setCreativeType] = useState<"Image" | "Video">("Image")
+  console.log(images)
 
   const [formData, setFormData] = useState<AdData>({
     campaign: {
@@ -87,6 +88,7 @@ export default function CampaignForm() {
 
     setFormData((prev) => {
       const updated = { ...prev }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let current: any = updated
 
       for (let i = 0; i < keys.length - 1; i++) {

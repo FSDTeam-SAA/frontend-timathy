@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { X } from "lucide-react"
+import Image from "next/image"
 
 interface ImageUploadProps {
   onImagesChange: (files: File[]) => void
@@ -65,9 +66,11 @@ export default function ImageUpload({ onImagesChange, maxImages = 5 }: ImageUplo
         <div className="grid grid-cols-2 gap-2">
           {previews.map((item, index) => (
             <div key={index} className="relative group">
-              <img
+              <Image
                 src={item.preview || "/placeholder.svg"}
                 alt={`Preview ${index + 1}`}
+                width={1000}
+                height={1000}
                 className="w-full h-24 object-cover rounded bg-slate-600"
               />
               <button

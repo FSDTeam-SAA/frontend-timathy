@@ -1,9 +1,10 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import React, { useState, FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 import { AuthLayout } from "@/components/web/auth-layout"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -12,7 +13,6 @@ export default function ForgotPasswordPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
 
   const validateForm = () => {
@@ -27,45 +27,51 @@ export default function ForgotPasswordPage() {
     return true
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const forgotPassMutation = useMutation({
+    mutationFn: async (bodyData: { email: string }) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/forget-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyData),
+        }
+      )
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to send reset email")
+      }
+
+      return data
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message || "OTP sent successfully!")
+      const encodedEmail = encodeURIComponent(email)
+      // Navigate directly to OTP verify page
+      router.push(`/otp-verify?email=${encodedEmail}`)
+    },
+    onError: (err) => {
+      toast.error(err.message || "Something went wrong!")
+      setLoading(false)
+    },
+  })
+
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     setError("")
 
     if (!validateForm()) return
 
     setLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Forgot Password:", { email })
-      setLoading(false)
-      setSubmitted(true)
-      setTimeout(() => {
-        router.push("/reset-password")
-      }, 2000)
-    }, 1000)
-  }
-
-  if (submitted) {
-    return (
-      <AuthLayout>
-        <div className="bg-[#4B4B4B] border border-[#E7E7E7] p-6 md:p-8 rounded-[8px] shadow-[0_0_120px_0_#FF690029]">
-          <h1 className="text-2xl md:text-[40px] font-bold text-[#F5F5F5] mb-2 text-center">
-            Check Your Email 📧
-          </h1>
-          <p className="text-center text-base text-[#AAAAAA] mb-6">
-            We&lsquo;ve sent a password reset link to <span className="text-[#F5F5F5] font-medium">{email}</span>
-          </p>
-          <div className="text-center">
-            <Link
-              href="/login"
-              className="inline-block text-[#FF6900] hover:underline font-medium transition"
-            >
-              Back to Login
-            </Link>
-          </div>
-        </div>
-      </AuthLayout>
+    forgotPassMutation.mutate(
+      { email },
+      {
+        onSettled: () => setLoading(false),
+      }
     )
   }
 
@@ -88,7 +94,9 @@ export default function ForgotPasswordPage() {
 
           {/* Email Field */}
           <div>
-            <label className="block text-[#F5F5F5] font-medium text-[18px] mb-2">Email Address</label>
+            <label className="block text-[#F5F5F5] font-medium text-[18px] mb-2">
+              Email Address
+            </label>
             <Input
               type="email"
               placeholder="Enter your email address"
@@ -109,14 +117,17 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full bg-[#FF6900] text-primary-foreground font-semibold h-[49px] rounded-[8px] hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Sending..." : "Send Reset Link"}
+              {loading ? "Sending..." : "Send OTP"}
             </Button>
           </div>
 
           {/* Back to Login */}
           <p className="text-center text-sm text-[#AAAAAA]">
             Remember your password?{" "}
-            <Link href="/login" className="text-[#3F74FF] hover:underline font-medium">
+            <Link
+              href="/login"
+              className="text-[#3F74FF] hover:underline font-medium"
+            >
               Back to Login
             </Link>
           </p>

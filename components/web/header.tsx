@@ -22,7 +22,9 @@ export default function Header() {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <div className="flex items-center gap-2">
+            <Link href="/">
             <Image src="/assets/logo.png" alt="Logo" width={1000} height={1000} className="w-[60px] h-[60px]" />
+            </Link>
           </div>
 
           {/* Desktop Navigation */}

@@ -51,6 +51,18 @@ export default function Campaigns() {
                   <span className="text-sm font-medium">Advertise</span>
                 </button>
               </Link>
+                <Link href="/creative-hub">
+                <button
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-gray-300 transition border-b-2 ${
+                    pathname === "/creative-hub"
+                      ? "border-[#FF6900]"
+                      : "border-transparent hover:border-slate-500"
+                  }`}
+                >
+                  <Zap size={18} />
+                  <span className="text-sm font-medium">Creative Hub</span>
+                </button>
+              </Link>
             </div>
           </div>
         </div>

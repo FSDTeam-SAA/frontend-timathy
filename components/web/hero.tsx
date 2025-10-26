@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -21,10 +22,12 @@ export default function Hero() {
             </div>
 
             <div className="flex justify-center lg:justify-start">
+              <Link href="/creative-hub">
               <button className="inline-flex items-center gap-2 rounded-[8px] h-[48px] bg-[#FF6900] px-8 py-3 text-base font-semibold text-white hover:bg-[#FF6900]/90 transition">
                 Get Started
                 <span>→</span>
               </button>
+              </Link>
             </div>
 
             {/* Stats Cards */}

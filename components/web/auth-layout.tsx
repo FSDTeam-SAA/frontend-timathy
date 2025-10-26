@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
+    <div className=" lg:min-h-screen  flex items-center justify-center p-4">
       <div className="w-full max-w-[1170px]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Logo Section */}

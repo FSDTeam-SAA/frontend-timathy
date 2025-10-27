@@ -124,7 +124,7 @@ export default function Creativepage() {
   // Helper: Get ALL page names from all businesses
   const getAllPageNames = (): string => {
     if (!userData?.facebookBusinesses || userData.facebookBusinesses.length === 0) {
-      return "KI-CRM.io";
+      return "N/A";
     }
 
     const pageNames = userData.facebookBusinesses
@@ -132,7 +132,7 @@ export default function Creativepage() {
       .map((page) => page.pageName)
       .filter((name): name is string => Boolean(name && name.trim() !== ""));
 
-    return pageNames.length > 0 ? pageNames.join(", ") : "KI-CRM.io";
+    return pageNames.length > 0 ? pageNames.join(", ") : "N/A";
   };
 
   return (

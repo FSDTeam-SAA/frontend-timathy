@@ -8,6 +8,7 @@ import { AdData, generateAdFromWebsite, saveAd } from "@/lib/api"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 export default function CampaignForm() {
   const [loading, setLoading] = useState(false)
@@ -24,7 +25,7 @@ export default function CampaignForm() {
     },
     adSet: {
       name: "",
-      dailyBudget: 5000,
+      dailyBudget: '' as unknown as number,
       startDate: new Date().toISOString(),
       endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       targeting: {
@@ -49,7 +50,7 @@ export default function CampaignForm() {
 
   const handleGenerateFromWebsite = async () => {
     if (!websiteUrl) {
-      alert("Please enter a website URL")
+      toast.error("Please enter a website URL")
       return
     }
 
@@ -75,7 +76,7 @@ export default function CampaignForm() {
         }))
       }
     } catch (error) {
-      alert("Failed to generate ad from website")
+      toast.error("Failed to generate ad from website")
       console.error(error)
     } finally {
       setGeneratingAd(false)
@@ -125,15 +126,15 @@ export default function CampaignForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.campaign.name || !formData.adSet.name || !formData.adCreative.name) {
-      alert("Please fill in all required fields")
-      return
-    }
+    // if (!formData.campaign.name || !formData.adSet.name || !formData.adCreative.name) {
+    //   toast.error("Please fill in all required fields")
+    //   return
+    // }
 
     setLoading(true)
     try {
       const response = await saveAd(formData)
-      alert("Ad created successfully!")
+      toast.success("Ad created successfully!")
       console.log("Ad created:", response)
       setFormData({
         campaign: { name: "", objective: "TRAFFIC" },
@@ -161,7 +162,7 @@ export default function CampaignForm() {
       setImages([])
       setPrimaryTexts(["Check out our latest offers!"])
     } catch (error) {
-      alert("Failed to create ad")
+      toast.error("Failed to create ad")
       console.error(error)
     } finally {
       setLoading(false)

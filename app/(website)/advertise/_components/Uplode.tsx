@@ -1,10 +1,10 @@
-"use client"
 
-import type React from "react"
+"use client"
 
 import { useState, useRef } from "react"
 import { X } from "lucide-react"
 import Image from "next/image"
+import { toast } from "sonner"
 
 interface ImageUploadProps {
   onImagesChange: (files: File[]) => void
@@ -15,12 +15,13 @@ export default function ImageUpload({ onImagesChange, maxImages = 5 }: ImageUplo
   const [previews, setPreviews] = useState<Array<{ file: File; preview: string }>>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     const validFiles = files.filter((file) => file.type.startsWith("image/"))
 
     if (previews.length + validFiles.length > maxImages) {
-      alert(`Maximum ${maxImages} images allowed`)
+      toast.error(`Maximum ${maxImages} images allowed`)
       return
     }
 
@@ -33,10 +34,14 @@ export default function ImageUpload({ onImagesChange, maxImages = 5 }: ImageUplo
     setPreviews(updatedPreviews)
     onImagesChange(updatedPreviews.map((p) => p.file))
 
+    // Reset file input value (so same file can be reselected)
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
+
+   
   }
+
 
   const removeImage = (index: number) => {
     const newPreviews = previews.filter((_, i) => i !== index)
@@ -53,14 +58,23 @@ export default function ImageUpload({ onImagesChange, maxImages = 5 }: ImageUplo
         </span>
       </div>
 
+      
       <button
+        type="button"
         onClick={() => fileInputRef.current?.click()}
         className="w-full bg-slate-600 text-white px-3 py-2 rounded text-sm hover:bg-slate-500 transition flex items-center justify-center gap-2"
       >
         <span>+</span> Add Images
       </button>
 
-      <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleFileSelect} className="hidden" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
 
       {previews.length > 0 && (
         <div className="grid grid-cols-2 gap-2">
@@ -74,6 +88,7 @@ export default function ImageUpload({ onImagesChange, maxImages = 5 }: ImageUplo
                 className="w-full h-24 object-cover rounded bg-slate-600"
               />
               <button
+                type="button"
                 onClick={() => removeImage(index)}
                 className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition"
               >
@@ -84,7 +99,7 @@ export default function ImageUpload({ onImagesChange, maxImages = 5 }: ImageUplo
         </div>
       )}
 
-      <p className="text-xs text-gray-400">At least 1 landscape image or 1 square image</p>
+      <p className="text-xs text-gray-400">At least 1 landscape or 1 square image</p>
     </div>
   )
 }

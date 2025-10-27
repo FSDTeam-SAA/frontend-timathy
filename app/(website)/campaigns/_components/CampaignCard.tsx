@@ -1,6 +1,4 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 export default function CampaignCard() {
@@ -47,11 +45,11 @@ export default function CampaignCard() {
         </div>
 
         {/* Edit Button */}
-        <div className="pt-[32px]">
+        {/* <div className="pt-[32px]">
         <Button className="w-full bg-[#FF6900] text-white h-[48px] rounded-[8px] font-semibold hover:bg-orange-600 transition text-sm font-bold">
           Edit
         </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   )

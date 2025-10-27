@@ -15,57 +15,38 @@ export default function Campaigns() {
     <div className="min-h-screen bg-[#4B4B4B3D]/25">
       <div>
         {/* Header */}
-        <div className="px-4 sm:px-6 lg:px-8 py-8 bg-[#4B4B4B3D]/25">
-          <div className="container">
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-              Dashboard
-            </h1>
-            <p className="text-gray-400 text-sm">
-              Manage Your Advertising Management
-            </p>
+        <div className="lg:px-8 py-8 bg-[#4B4B4B3D]/25">
+        <div className="container mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            Dashboard
+          </h1>
+          <p className="text-gray-400 text-sm">
+            Manage Your Advertising Management
+          </p>
 
-            {/* Tabs */}
-            <div className="mt-6 flex gap-4 py-6 rounded-[8px] p-2 w-full bg-[#4B4B4B]">
-              <Link href="/campaigns">
+          {/* Tabs */}
+          <div className="mt-6 flex gap-2 sm:gap-4 py-4 sm:py-6 rounded-[8px]   w-full bg-[#4B4B4B] overflow-x-auto">
+            {[
+              { href: "/campaigns", label: "Campaigns", icon: Grid3x3 },
+              { href: "/advertise", label: "Advertise", icon: Zap },
+              { href: "/creative-hub", label: "Creative Hub", icon: Zap },
+            ].map((tab) => (
+              <Link key={tab.href} href={tab.href}>
                 <button
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-white transition border-b-2 ${
-                    pathname === "/campaigns"
-                      ? "border-[#FF6900]"
-                      : "border-transparent hover:border-slate-500"
+                  className={`flex items-center gap-2 px-3  py-2 text-xs  md:text-base font-medium transition border-b-2 whitespace-nowrap ${
+                    pathname === tab.href
+                      ? "border-[#FF6900] text-white"
+                      : "border-transparent text-gray-300 hover:border-slate-500"
                   }`}
                 >
-                  <Grid3x3 size={18} />
-                  <span className="text-sm font-medium">Campaigns</span>
+                  <tab.icon size={18} />
+                  {tab.label}
                 </button>
               </Link>
-
-              <Link href="/advertise">
-                <button
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-gray-300 transition border-b-2 ${
-                    pathname === "/advertise"
-                      ? "border-[#FF6900]"
-                      : "border-transparent hover:border-slate-500"
-                  }`}
-                >
-                  <Zap size={18} />
-                  <span className="text-sm font-medium">Advertise</span>
-                </button>
-              </Link>
-                <Link href="/creative-hub">
-                <button
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-gray-300 transition border-b-2 ${
-                    pathname === "/creative-hub"
-                      ? "border-[#FF6900]"
-                      : "border-transparent hover:border-slate-500"
-                  }`}
-                >
-                  <Zap size={18} />
-                  <span className="text-sm font-medium">Creative Hub</span>
-                </button>
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
+      </div>
 
         {/* Main Content */}
         <div className="px-4 sm:px-6 lg:px-0 pb-12">

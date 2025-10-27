@@ -14,9 +14,9 @@ export default function Header() {
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "About Us", href: "/about" },
-    { label: "Contact Us", href: "/contact" },
+    { label: "Dashboard", href: "/campaigns" },
+    { label: "About Us", href: "#" },
+    { label: "Contact Us", href: "#" },
   ];
 
   const isAuthenticated = status === "authenticated";

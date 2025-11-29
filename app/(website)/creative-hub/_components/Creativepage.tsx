@@ -215,7 +215,7 @@ export default function Creativepage() {
 
               {/* Buttons */}
               <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
-                <Link href="/advertise">
+                <Link href="/page">
                   <button className="px-4 sm:px-6 h-10 sm:h-12 bg-[#1E1E1E] text-white text-xs sm:text-sm font-medium rounded-[8px] hover:bg-[#2A2A2A] transition whitespace-nowrap">
                     Create Ad
                   </button>

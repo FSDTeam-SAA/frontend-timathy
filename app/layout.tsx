@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import AppProvider from "@/provider/AppProvider";
 import SessionProvider from "@/provider/SessionProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 // Import Manrope font
 const manrope = Manrope({
@@ -30,6 +31,7 @@ export default function RootLayout({
         <AppProvider>
           <SessionProvider>
           {children}
+              <Toaster />
           </SessionProvider>
         </AppProvider>
       </body>

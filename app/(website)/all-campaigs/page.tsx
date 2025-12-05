@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import AllCampaigns from './Allcampaignpage'
-
+// new page
 const page = () => {
   return (
     <div>

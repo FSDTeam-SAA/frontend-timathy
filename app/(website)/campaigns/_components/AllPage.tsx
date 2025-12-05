@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Facebook } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -62,7 +62,7 @@ const AdvertiseCard: React.FC<{
       adAccountId: adAccounts as any,
     });
 
-    router.push(`/create-campaigs?${params.toString()}`);
+    router.push(`/all-campaigs?${params.toString()}`);
   };
 
   return (
@@ -107,12 +107,11 @@ const AdvertiseCard: React.FC<{
   );
 };
 
-const AdvertiseSection: React.FC = () => {
+const Allpages: React.FC = () => {
   const { data: session } = useSession();
   const token = (session?.user as User | undefined)?.accessToken;
   const userId = (session?.user as User | undefined)?.id;
-
- 
+  console.log(userId)
 
   const { data, isLoading, isError, error } = useQuery<ApiResponse>({
     queryKey: ['user-business-pages', userId],
@@ -145,7 +144,7 @@ console.log(adAccounts)
 
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-10">
+    <div className="container mx-auto py-10">
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">Your Business Pages</h2>
         <p className="text-gray-400">Select a page to create ad campaigns</p>
@@ -183,4 +182,4 @@ console.log(adAccounts)
   );
 };
 
-export default AdvertiseSection;
+export default Allpages;

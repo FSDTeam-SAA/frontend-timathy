@@ -151,7 +151,7 @@ export default function Creativepage() {
           <div className="mt-6 flex gap-2 sm:gap-4 py-4 sm:py-6 rounded-[8px] w-full bg-[#4B4B4B] overflow-x-auto">
             {[
               { href: "/campaigns", label: "Campaigns", icon: Grid3x3 },
-              { href: "/advertise", label: "Advertise", icon: Zap },
+              // { href: "/advertise", label: "Advertise", icon: Zap },
               { href: "/creative-hub", label: "Creative Hub", icon: Zap },
             ].map((tab) => (
               <Link key={tab.href} href={tab.href}>

@@ -31,7 +31,7 @@ export default function RootLayout({
         <AppProvider>
           <SessionProvider>
           {children}
-              <Toaster />
+              <Toaster position="top-right" />
           </SessionProvider>
         </AppProvider>
       </body>

@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
 
@@ -41,7 +41,6 @@ interface ApiResponse {
   campaigns: Campaign[];
 }
 
-// Response from /create-adSet endpoint
 interface CreateAdSetResponse {
   message: string;
   adSet: {
@@ -50,7 +49,6 @@ interface CreateAdSetResponse {
     fbAdSetId: string;
     dailyBudget: number;
     status: string;
-    // ... other fields
   };
 }
 
@@ -70,13 +68,12 @@ const countries = [
 interface AdSetStepProps {
   adSet: any;
   setAdSet: (adSet: any) => void;
-  nextTab: (adSetId: string) => void; // Now accepts adSetId
+  nextTab: (adSetId: string) => void;
   onGetAdSetId: (id: string) => void;
   prevTab: () => void;
   pageId: string;
   adAccountId: string;
 }
-
 
 export default function AdSetStep({
   adSet,
@@ -91,11 +88,11 @@ export default function AdSetStep({
   const token = (session?.user as User)?.accessToken;
   const userId = (session?.user as User)?.id;
 
-
   const inputStyle =
-    "border border-[#4B4B4B] h-[48px] rounded-[8px] bg-[#4B4B4B] text-white placeholder:text-gray-400 ";
+    "border border-[#4B4B4B] h-[48px] rounded-[8px] bg-[#4B4B4B] text-white placeholder:text-gray-400";
 
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: ["campaigns", userId, pageId],
@@ -139,8 +136,6 @@ export default function AdSetStep({
       const adSetId = data.adSet._id;
       onGetAdSetId(adSetId);
       toast.success(data.message);
-
-
       nextTab(adSetId);
     },
     onError: (error: any) => {
@@ -172,13 +167,35 @@ export default function AdSetStep({
       endDate: endDate.toISOString(),
       targeting: {
         locations: adSet.targeting?.locations || [],
-        ageMin: Number(adSet.targeting.ageMin),
+        ageMin: Number(adSet.targeting?.ageMin),
         ageMax: Number(adSet.targeting?.ageMax),
         gender: adSet.targeting?.gender || undefined,
       },
     };
 
     mutation.mutate(payload);
+  };
+
+  // Helper to remove a location
+  const removeLocation = (code: string) => {
+    const updated = (adSet.targeting?.locations || []).filter((c: string) => c !== code);
+    setAdSet({
+      ...adSet,
+      targeting: { ...adSet.targeting, locations: updated },
+    });
+  };
+
+  // Helper to toggle a location
+  const toggleLocation = (code: string) => {
+    const current = adSet.targeting?.locations || [];
+    const updated = current.includes(code)
+      ? current.filter((c: string) => c !== code)
+      : [...current, code];
+
+    setAdSet({
+      ...adSet,
+      targeting: { ...adSet.targeting, locations: updated },
+    });
   };
 
   return (
@@ -262,40 +279,64 @@ export default function AdSetStep({
           />
         </div>
 
-        {/* Locations - Multi Select with Checkboxes */}
+        {/* Locations – Custom Multi Select with Tags */}
         <div className="md:col-span-2">
           <Label>Locations</Label>
-          <Select
-            onValueChange={(value) => {
-              const current = adSet.targeting?.locations || [];
-              const updated = current.includes(value)
-                ? current.filter((c: string) => c !== value)
-                : [...current, value];
-              setAdSet({
-                ...adSet,
-                targeting: { ...adSet.targeting, locations: updated },
-              });
-            }}
-          >
-            <SelectTrigger className={inputStyle}>
-              <SelectValue placeholder="Select countries" />
-            </SelectTrigger>
-            <SelectContent className="text-white bg-[#3A3A3A] max-h-60">
-              {countries.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  <div className="flex items-center">
+          <div className="relative">
+            <div
+              className={`${inputStyle} flex flex-wrap items-center gap-2 min-h-[48px] p-2 cursor-pointer`}
+              onClick={() => setIsLocationOpen(!isLocationOpen)}
+            >
+              {(adSet?.targeting?.locations || []).length === 0 && (
+                <span className="text-gray-400">Select countries</span>
+              )}
+              {(adSet?.targeting?.locations || []).map((code: string) => {
+                const country = countries.find((c) => c.code === code);
+                return (
+                  <span
+                    key={code}
+                    className="inline-flex items-center gap-1 bg-orange-600 text-white text-sm px-3 py-1 rounded-full"
+                  >
+                    {country?.name || code}
+                    <X
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeLocation(code);
+                      }}
+                    />
+                  </span>
+                );
+              })}
+            </div>
+
+            {isLocationOpen && (
+              <div className="absolute z-50 w-full mt-1 bg-[#3A3A3A] border border-[#4B4B4B] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                {countries.map((c) => (
+                  <div
+                    key={c.code}
+                    onClick={() => toggleLocation(c.code)}
+                    className="flex items-center px-4 py-3 hover:bg-[#4B4B4B] cursor-pointer transition"
+                  >
                     <input
                       type="checkbox"
                       readOnly
                       checked={adSet?.targeting?.locations?.includes(c.code)}
-                      className="mr-2"
+                      className="mr-3 pointer-events-none"
                     />
-                    {c.name}
+                    <span className="text-white">{c.name}</span>
                   </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Click outside to close */}
+          {isLocationOpen && (
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setIsLocationOpen(false)}
+            />
+          )}
         </div>
 
         {/* Age Min */}
@@ -342,7 +383,6 @@ export default function AdSetStep({
           />
         </div>
 
-
         {/* Gender */}
         <div>
           <Label>Gender</Label>
@@ -372,7 +412,7 @@ export default function AdSetStep({
 
       {/* Buttons */}
       <div className="mt-8 flex justify-between">
-        <Button variant="outline" onClick={prevTab}>
+        <Button variant="outline" onClick={prevTab} className="h-[48px] rounded-[8px]">
           <ChevronLeft className="mr-2 h-4 w-4" /> Back
         </Button>
 

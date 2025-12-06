@@ -1,11 +1,16 @@
 /* eslint-disable */
-
 'use client';
 
 import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, Upload, Sparkles, X } from "lucide-react";
@@ -35,33 +40,29 @@ export default function CreativeStep({
   const { data: session } = useSession();
   const token = (session?.user as any)?.accessToken;
 
-  // State to track if creative was successfully created and its ID
   const [creativeCreated, setCreativeCreated] = useState(false);
   const [createdCreativeId, setCreatedCreativeId] = useState<string | null>(null);
 
-  const inputStyle = "border border-[#4B4B4B] h-12 rounded-[8px] bg-[#4B4B4B] text-white placeholder:text-gray-400";
+  const inputStyle =
+    "border border-[#4B4B4B] h-12 rounded-[8px] bg-[#4B4B4B] text-white placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-[#FF6900]";
 
-  // Handle file selection click
   const handleFileSelect = () => inputRef.current?.click();
 
-  // Handle file upload and generate preview
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setCreative(prev => ({ ...prev, file, preview: reader.result as string }));
+      setCreative((prev) => ({ ...prev, file, preview: reader.result as string }));
     };
     reader.readAsDataURL(file);
   };
 
-  // Remove uploaded file
   const removeFile = () => {
-    setCreative(prev => ({ ...prev, file: null, preview: null }));
+    setCreative((prev) => ({ ...prev, file: null, preview: null }));
   };
 
-  // Mutation: Generate ad copy using AI from website URL
   const generateAdMutation = useMutation({
     mutationFn: async (url: string) => {
       if (!url) throw new Error("Please enter a website URL");
@@ -78,7 +79,7 @@ export default function CreativeStep({
       return data;
     },
     onSuccess: (data) => {
-      setCreative(prev => ({
+      setCreative((prev) => ({
         ...prev,
         headline: data.adData?.adCreative?.headline || data.crawledData?.headings?.[0] || "Grab This Deal Now!",
         primaryText: data.adData?.adCreative?.primaryText || "Limited time offer – don't miss out!",
@@ -88,7 +89,6 @@ export default function CreativeStep({
     onError: (err: any) => toast.error(err.message || "Failed to generate ad copy"),
   });
 
-  // Mutation: Step 1 - Create Ad Creative (Add Creative button)
   const createCreativeMutation = useMutation({
     mutationFn: async () => {
       if (!creative.file) throw new Error("Please upload an image or video");
@@ -129,16 +129,16 @@ export default function CreativeStep({
       toast.dismiss();
       const id = result.creativeId || result.id;
       setCreatedCreativeId(id);
-      setCreativeCreated(true); // Enable Publish button
+      setCreativeCreated(true);
 
       toast.success("Ad Creative Created Successfully!", {
         description: (
-          <div className="space-y-1 text-sm">
-            <p>Creative ID: <code className="bg-gray-800 px-2 py-1 rounded">{id}</code></p>
-            {result.name && <p>Name: {result.name}</p>}
-          </div>
-        ),
-        duration: 12000,
+        <div className="space-y-1 text-sm">
+          <p>Creative ID: <code className="bg-gray-800 px-2 py-1 rounded">{id}</code></p>
+          {result.name && <p>Name: {result.name}</p>}
+        </div>
+      ),
+      duration: 12000,
       });
     },
     onError: (err: any) => {
@@ -147,7 +147,6 @@ export default function CreativeStep({
     },
   });
 
-  // Mutation: Step 2 - Final Publish (calls /ai/final-post)
   const publishMutation = useMutation({
     mutationFn: async () => {
       if (!createdCreativeId) throw new Error("Creative not created yet");
@@ -187,16 +186,18 @@ export default function CreativeStep({
   });
 
   return (
-    <Card className="p-8 bg-[#2A2A2A] border-[#4B4B4B]">
-      <h2 className="text-2xl font-semibold mb-8 text-white">Create Ad Creative</h2>
+    <Card className="p-4 sm:p-6 lg:p-8 bg-[#2A2A2A] border-[#4B4B4B] mx-auto max-w-5xl">
+      <h2 className="text-2xl sm:text-3xl font-semibold mb-6 sm:mb-8 text-white text-center sm:text-left">
+        Create Ad Creative
+      </h2>
 
-      <div className="space-y-6">
+      <div className="space-y-6 lg:space-y-8">
         {/* Creative Name */}
         <div>
-          <Label className="text-white">Creative Name</Label>
+          <Label className="text-white text-sm sm:text-base">Creative Name</Label>
           <Input
             value={creative.name}
-            onChange={e => setCreative(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) => setCreative((prev) => ({ ...prev, name: e.target.value }))}
             placeholder="e.g. Summer Sale 2025"
             className={inputStyle}
           />
@@ -204,27 +205,34 @@ export default function CreativeStep({
 
         {/* Website URL + AI Generate */}
         <div>
-          <Label className="text-white">Website URL (for AI generation)</Label>
-          <div className="flex gap-3">
+          <Label className="text-white text-sm sm:text-sm sm:text-base">Website URL (for AI generation)</Label>
+          <div className="flex flex-col sm:flex-row gap-3">
             <Input
               value={creative.websiteUrl || ""}
-              onChange={e => setCreative(prev => ({ ...prev, websiteUrl: e.target.value }))}
+              onChange={(e) => setCreative((prev) => ({ ...prev, websiteUrl: e.target.value }))}
               placeholder="https://yourwebsite.com"
-              className={inputStyle}
+              className={inputStyle + " flex-1"}
             />
             <Button
               onClick={() => generateAdMutation.mutate(creative.websiteUrl || "")}
               disabled={generateAdMutation.isPending || !creative.websiteUrl}
-              className="bg-[#FF6900] hover:bg-[#e85e00] h-12 px-6"
+              className="bg-[#FF6900] hover:bg-[#e85e00] h-12 px-4 sm:px-6 rounded-[8px] w-full sm:w-auto"
             >
-              {generateAdMutation.isPending ? "Generating..." : <><Sparkles className="mr-2 h-5 w-5" />Generate by AI</>}
+              {generateAdMutation.isPending ? "Generating..." : (
+                <>
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Generate by AI
+                </>
+              )}
             </Button>
           </div>
         </div>
 
         {/* Media Upload */}
         <div>
-          <Label className="text-white">Upload {creative.format === "VIDEO" ? "Video" : "Image"}</Label>
+          <Label className="text-white text-sm sm:text-base">
+            Upload {creative.format === "VIDEO" ? "Video" : "Image"}
+          </Label>
           <input
             type="file"
             accept={creative.format === "VIDEO" ? "video/*" : "image/*"}
@@ -236,23 +244,33 @@ export default function CreativeStep({
           {!creative.preview ? (
             <div
               onClick={handleFileSelect}
-              className="cursor-pointer border-2 border-dashed border-gray-500 p-10 rounded-lg text-center bg-[#3A3A3A] hover:bg-[#4B4B4B] transition-colors"
+              className="cursor-pointer border-2 border-dashed border-gray-500 p-8 sm:p-12 rounded-lg text-center bg-[#3A3A3A] hover:bg-[#4B4B4B] transition-colors"
             >
-              <Upload className="mx-auto mb-4 h-8 w-8 text-[#FF6900]" />
-              <p className="text-white">Click to upload {creative.format === "VIDEO" ? "video" : "image"}</p>
+              <Upload className="mx-auto mb-4 h-10 w-10 text-[#FF6900]" />
+              <p className="text-white text-sm sm:text-base">
+                Click to upload {creative.format === "VIDEO" ? "video" : "image"}
+              </p>
             </div>
           ) : (
-            <div className="relative max-w-2xl mx-auto">
+            <div className="relative max-w-full mx-auto">
               {creative.format === "VIDEO" ? (
-                <video src={creative.preview} controls className="rounded-lg shadow-lg w-full" />
+                <video
+                  src={creative.preview}
+                  controls
+                  className="rounded-lg shadow-lg w-full max-h-96 object-contain bg-black"
+                />
               ) : (
-                <img src={creative.preview} alt="Preview" className="rounded-lg shadow-lg w-full" />
+                <img
+                  src={creative.preview}
+                  alt="Preview"
+                  className="rounded-lg shadow-lg w-full max-h-96 object-contain"
+                />
               )}
               <button
                 onClick={removeFile}
-                className="absolute top-2 right-2 bg-black/50 hover:bg-black text-white rounded-full p-1 transition"
+                className="absolute top-2 right-2 bg-black/70 hover:bg-black text-white rounded-full p-2 transition"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
           )}
@@ -260,14 +278,16 @@ export default function CreativeStep({
 
         {/* Ad Format */}
         <div>
-          <Label className="text-white">Ad Format</Label>
+          <Label className="text-white text-sm sm:text-base">Ad Format</Label>
           <Select
             value={creative.format}
             onValueChange={(v: "SINGLE_IMAGE" | "VIDEO") =>
-              setCreative(prev => ({ ...prev, format: v, file: null, preview: null }))
+              setCreative((prev) => ({ ...prev, format: v, file: null, preview: null }))
             }
           >
-            <SelectTrigger className={inputStyle}><SelectValue /></SelectTrigger>
+            <SelectTrigger className={inputStyle}>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent className="bg-[#3A3A3A] text-white border-[#4B4B4B]">
               <SelectItem value="SINGLE_IMAGE">Single Image</SelectItem>
               <SelectItem value="VIDEO">Video</SelectItem>
@@ -277,10 +297,10 @@ export default function CreativeStep({
 
         {/* Headline */}
         <div>
-          <Label className="text-white">Headline</Label>
+          <Label className="text-white text-sm sm:text-base">Headline</Label>
           <Input
             value={creative.headline}
-            onChange={e => setCreative(prev => ({ ...prev, headline: e.target.value }))}
+            onChange={(e) => setCreative((prev) => ({ ...prev, headline: e.target.value }))}
             placeholder="e.g. 50% Off Everything!"
             className={inputStyle}
           />
@@ -288,54 +308,54 @@ export default function CreativeStep({
 
         {/* Primary Text */}
         <div>
-          <Label className="text-white">Primary Text</Label>
+          <Label className="text-white text-sm sm:text-base">Primary Text</Label>
           <textarea
-            rows={6}
+            rows={5}
             value={creative.primaryText}
-            onChange={e => setCreative(prev => ({ ...prev, primaryText: e.target.value }))}
+            onChange={(e) => setCreative((prev) => ({ ...prev, primaryText: e.target.value }))}
             placeholder="Write an engaging ad message that grabs attention..."
-            className="w-full border border-[#4B4B4B] bg-[#4B4B4B] text-white p-4 rounded-lg resize-none focus:ring-2 focus:ring-[#FF6900]"
+            className="w-full border border-[#4B4B4B] bg-[#4B4B4B] text-white p-4 rounded-[8px] outline-none placeholder:text-gray-400 text-sm sm:text-base resize-none"
           />
         </div>
 
         {/* Destination URL */}
         <div>
-          <Label className="text-white">Destination URL</Label>
+          <Label className="text-white text-sm sm:text-base">Destination URL</Label>
           <Input
             value={creative.destinationUrl}
-            onChange={e => setCreative(prev => ({ ...prev, destinationUrl: e.target.value }))}
+            onChange={(e) => setCreative((prev) => ({ ...prev, destinationUrl: e.target.value }))}
             placeholder="https://yourwebsite.com/offer"
             className={inputStyle}
           />
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-12 flex justify-between">
-        <Button variant="outline" onClick={prevTab} className="border-[#FF6900] text-white hover:bg-[#FF6900]/10">
-          <ChevronLeft className="mr-2" /> Back
+      {/* Action Buttons - Responsive */}
+      <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row justify-between gap-4">
+        <Button
+          variant="outline"
+          onClick={prevTab}
+          className="border-white text-white hover:bg-[#FF6900]/10 h-12 rounded-[8px] order-2 sm:order-1"
+        >
+          <ChevronLeft className="mr-2 h-5 w-5" /> Back
         </Button>
 
-        <div className="flex gap-4 items-center">
-          {/* Add Creative Button */}
+        <div className="flex flex-col sm:flex-row gap-4 order-1 sm:order-2 w-full sm:w-auto">
           <Button
-            size="lg"
             onClick={() => createCreativeMutation.mutate()}
             disabled={createCreativeMutation.isPending}
-            className="bg-[#FF6900] hover:bg-[#e85e00] px-10 h-[48px] rounded-[8px]"
+            className="bg-[#FF6900] hover:bg-[#e85e00] h-12 px-8 rounded-[8px] w-full sm:w-auto"
           >
             {createCreativeMutation.isPending ? "Creating..." : "Add Creative"}
           </Button>
 
-          {/* Publish Button - Only enabled after creative is created */}
           <Button
-            size="lg"
             onClick={() => publishMutation.mutate()}
             disabled={!creativeCreated || publishMutation.isPending}
             className={`
-              px-10 h-[48px] rounded-[8px] flex items-center transition-all
-              ${creativeCreated 
-                ? "bg-[#00D4FF] hover:bg-[#00b8e6] text-white" 
+              h-12 px-8 rounded-[8px] flex items-center justify-center transition-all w-full sm:w-auto
+              ${creativeCreated
+                ? "bg-[#00D4FF] hover:bg-[#00b8e6] text-white"
                 : "bg-gray-600 text-gray-400 cursor-not-allowed"
               }
             `}

@@ -10,7 +10,9 @@ import { useSession, signOut } from "next-auth/react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const {  status } = useSession(); 
+  const { status } = useSession();
+
+  const isAuthenticated = status === "authenticated";
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -19,96 +21,100 @@ export default function Header() {
     { label: "Contact Us", href: "#" },
   ];
 
-  const isAuthenticated = status === "authenticated";
-
   const handleAuthClick = () => {
     if (isAuthenticated) {
       signOut({ callbackUrl: "/" });
     }
-    setIsOpen(false); // close mobile drawer
+    setIsOpen(false);
   };
 
   return (
     <header className="border-b border-[#FF6900] bg-[#1E1E1E] sticky top-0 z-50">
-      <div className="container px-4 sm:px-6 lg:px-8 py-[10px]">
-        <div className="flex items-center justify-between py-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <Link href="/">
-              <Image
-                src="/assets/logo.png"
-                alt="Logo"
-                width={1000}
-                height={1000}
-                className="w-[60px] h-[60px]"
-              />
-            </Link>
-          </div>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/assets/logo.png"
+              alt="Logo"
+              width={1000}
+              height={1000}
+              className="w-14 h-14 sm:w-16 sm:h-16"
+            />
+          </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-[#F5F5F5] text-[18px] font-medium transition hover:text-[#FF6900]"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          {/* Desktop Navigation + Login/Logout Button */}
+          <div className="hidden md:flex items-center gap-8">
+            <nav className="flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-[#F5F5F5] text-lg font-medium hover:text-[#FF6900] transition"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
-          {/* ---------- AUTH BUTTON (visible on ALL devices) ---------- */}
-          <div className="flex items-center gap-4">
+            {/* Desktop Auth Button */}
             <Button
               asChild
-              className="rounded-[8px] bg-[#FF6900] px-[45px] h-[48px] text-base font-semibold text-[#FFFFFF] hover:bg-orange-600 transition"
+              className="bg-[#FF6900] hover:bg-orange-600 px-10 h-12 rounded-[8px] text-white font-semibold text-base transition"
             >
               {isAuthenticated ? (
-                <button onClick={handleAuthClick}>Logout</button>
+                <button onClick={() => signOut({ callbackUrl: "/" })}>Logout</button>
               ) : (
                 <Link href="/login">Login</Link>
               )}
             </Button>
-
-            {/* ---------- MOBILE MENU ---------- */}
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild className="md:hidden">
-                <button className="p-2 text-[#F5F5F5] hover:text-[#FF6900] transition">
-                  <Menu size={24} />
-                </button>
-              </SheetTrigger>
-
-              <SheetContent side="right" className="bg-[#1E1E1E] border-l border-[#FF6900]">
-                <div className="flex flex-col gap-6 mt-8">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      className="text-[#F5F5F5] text-lg font-medium transition hover:text-[#FF6900]"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-
-                  {/* Mobile auth button (same logic as desktop) */}
-                  <Button
-                    asChild
-                    className="rounded-[8px] bg-[#FF6900] h-[48px] text-base font-semibold text-[#FFFFFF] hover:bg-orange-600 transition w-full"
-                  >
-                    {isAuthenticated ? (
-                      <button onClick={handleAuthClick}>Logout</button>
-                    ) : (
-                      <Link href="/login" onClick={() => setIsOpen(false)}>
-                        Login
-                      </Link>
-                    )}
-                  </Button>
-                </div>
-              </SheetContent>
-            </Sheet>
           </div>
+
+          {/* Mobile Menu Trigger */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden text-[#F5F5F5] hover:text-[#FF6900]"
+              >
+                <Menu className="h-7 w-7" />
+              </Button>
+            </SheetTrigger>
+
+            <SheetContent side="right" className="w-80 bg-[#1E1E1E] border-l border-[#FF6900]">
+              <div className="flex flex-col gap-8 mt-10">
+
+                {/* Mobile Navigation Links */}
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className="text-[#F5F5F5] text-xl font-medium hover:text-[#FF6900] transition"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+
+                {/* Mobile Auth Button (Only one in mobile) */}
+                <Button
+                  asChild
+                  className="w-full bg-[#FF6900] hover:bg-orange-600 h-14 rounded-[10px] text-white font-bold text-lg mt-6"
+                >
+                  {isAuthenticated ? (
+                    <button onClick={handleAuthClick}>Logout</button>
+                  ) : (
+                    <Link href="/login" onClick={() => setIsOpen(false)}>
+                      Login
+                    </Link>
+                  )}
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+
         </div>
       </div>
     </header>

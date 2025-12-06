@@ -115,22 +115,22 @@ export default function MetaAdsPage() {
         </h1>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 mb-6 bg-[#4B4B4B] h-14 rounded-none">
+          <TabsList className="grid grid-cols-3 mb-6 bg-[#4B4B4B] h-14 rounded-[8px]">
             <TabsTrigger
               value="campaign"
-              className="rounded-none bg-transparent text-white data-[state=active]:border-b-4 data-[state=active]:border-[#FF6900] data-[state=active]:font-bold text-lg"
+              className="rounded-none bg-transparent text-white data-[state=active]:border-b-2 data-[state=active]:border-[#FF6900] data-[state=active]:font-bold text-lg"
             >
               1. Campaign
             </TabsTrigger>
             <TabsTrigger
               value="adset"
-              className="rounded-none bg-transparent text-white data-[state=active]:border-b-4 data-[state=active]:border-[#FF6900] data-[state=active]:font-bold text-lg"
+              className="rounded-none bg-transparent text-white data-[state=active]:border-b-2 data-[state=active]:border-[#FF6900] data-[state=active]:font-bold text-lg"
             >
               2. Ad Set
             </TabsTrigger>
             <TabsTrigger
               value="creative"
-              className="rounded-none bg-transparent text-white data-[state=active]:border-b-4 data-[state=active]:border-[#FF6900] data-[state=active]:font-bold text-lg"
+              className="rounded-none bg-transparent text-white data-[state=active]:border-b-2 data-[state=active]:border-[#FF6900] data-[state=active]:font-bold text-lg"
             >
               3. Creative
             </TabsTrigger>

@@ -11,7 +11,7 @@ export default function Hero() {
           {/* Left Content */}
           <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-4xl lg:text-[56px] font-bold leading-tight text-[#F5F5F5]">
+              <h1 className="text-3xl sm:text-4xl lg:text-[56px] font-bold  text-[#F5F5F5] leading-[150%]">
                 AI-Powered Advertising Made Simple
               </h1>
               <p className="text-sm sm:text-base text-[#AAAAAA] font-normal pt-4 sm:pt-6 max-w-xl mx-auto lg:mx-0">

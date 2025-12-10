@@ -1,4 +1,4 @@
-// src/types/toastui.d.ts
+/*eslint-disable*/
 
 declare module '@toast-ui/react-image-editor' {
   import { Component } from 'react';

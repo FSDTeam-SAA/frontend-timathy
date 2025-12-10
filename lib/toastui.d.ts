@@ -1,4 +1,5 @@
 /*eslint-disable*/
+declare module '@scopesolutions/react-image-editor';
 
 declare module '@toast-ui/react-image-editor' {
   import { Component } from 'react';
